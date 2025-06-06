@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mayfair Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Open+Sans:wght@300;400&family=Cormorant+Garamond:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
+      color: #222;
+      line-height: 1.6;
+    }
+    .top-bar {
+      background-color: #3B3535;
+      color: white;
+      text-align: center;
+      padding: 8px 20px;
+      font-size: 0.9rem;
+      font-family: 'Cormorant Garamond', serif;
+      letter-spacing: 0.5px;
+    }
+    .top-bar a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      width: 100%;
+      transition: opacity 0.3s ease;
+    }
+    .top-bar a:hover {
+      opacity: 0.8;
+    }
+    header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: absolute;
+      top: 32px; /* Account for top-bar height */
+      left: 0;
+      right: 0;
+      z-index: 100;
+    }
+    .hamburger {
+      cursor: pointer;
+      padding: 10px;
+      z-index: 100;
+    }
+    .hamburger span {
+      display: block;
+      width: 25px;
+      height: 2px;
+      background-color: white;
+      margin: 5px 0;
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+      transition-delay: 0.1s;
+    }
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+      transition-delay: 0.1s;
+    }
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+      transition-delay: 0.1s;
+    }
+    .nav-menu {
+      position: absolute;
+      top: 100%;
+      left: 10px;
+      padding: 20px;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 99;
+      opacity: 0;
+      pointer-events: none;
+      min-width: 200px;
+      transform-origin: top left;
+    }
+    .nav-menu.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .nav-menu a {
+      display: block;
+      margin: 15px 0;
+      text-decoration: none;
+      color: white;
+      font-weight: 300;
+      font-size: 1.1rem;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      font-family: 'Cormorant Garamond', serif;
+      letter-spacing: 0.5px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    .nav-menu.active a {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .nav-menu a:hover {
+      opacity: 0.8;
+    }
+    .nav-menu a:nth-child(1) { transition-delay: 0.1s; }
+    .nav-menu a:nth-child(2) { transition-delay: 0.2s; }
+    .nav-menu a:nth-child(3) { transition-delay: 0.3s; }
+    .nav-menu a:nth-child(4) { transition-delay: 0.4s; }
+    .logo {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .logo img {
+      height: 30px;
+      width: auto;
+      filter: brightness(0) invert(1); /* Make logo white */
+    }
+    .popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .popup-content {
+      background-color: white;
+      position: relative;
+      max-width: 900px;
+      width: 90%;
+      display: flex;
+      overflow: hidden;
+    }
+    .popup-content.announcement {
+      max-width: 500px;
+      padding: 40px;
+      text-align: center;
+    }
+    #mapPopup .popup-content {
+      max-width: 800px;
+      padding: 20px;
+      flex-direction: column;
+    }
+    #productPopup .popup-content {
+      display: flex;
+      flex-direction: row;
+    }
+    .popup-image {
+      width: 50%;
+      height: 600px;
+      object-fit: cover;
+    }
+    .popup-text {
+      width: 50%;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .popup-text h2 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+    }
+    .popup-text p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      letter-spacing: 0.3px;
+    }
+    .popup-button {
+      background-color: #3B3535;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      align-self: flex-start;
+    }
+    .popup-button:hover {
+      background-color: #4a4242;
+    }
+    .close-popup {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #333;
+      z-index: 1001;
+    }
+    .hero-button {
+      background-color: white;
+      color: #333;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Cormorant Garamond', serif;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      font-weight: 400;
+    }
+    .hero-button:hover {
+      background-color: #f0f0f0;
+    }
+    .hero {
+      position: relative;
+      height: 100vh; /* Make hero full height */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      font-family: 'Playfair Display', serif;
+      text-align: center;
+      padding: 0;
+      overflow: hidden;
+    }
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    .slide.active {
+      opacity: 1;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+    .hero-content h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+    }
+    .hero-content p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+    .section {
+      padding: 60px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section h2 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 40px;
+      letter-spacing: 0.5px;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+    .product {
+      text-align: center;
+    }
+    .product img {
+      width: 100%;
+      height: auto;
+      border: 1px solid #eee;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+    .product img:hover {
+      opacity: 0.9;
+    }
+    .product h3 {
+      margin-top: 10px;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+    .product p {
+      color: #777;
+    }
+    .footer-container {
+      background: #3B3535;
+      color: white;
+      padding: 60px 20px;
+    }
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+    }
+    .footer-section h3 {
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+    }
+    .footer-section p,
+    .footer-section a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+    }
+    .footer-section a:hover {
+      text-decoration: underline;
+    }
+    .footer-logo {
+      text-align: right;
+    }
+    .footer-logo img {
+      max-width: 150px;
+    }
+    .copyright {
+      text-align: left;
+      padding-top: 20px;
+      font-size: 0.8rem;
+      color: #999;
+    }
+    .split-section {
+      display: flex;
+      height: 80vh;
+      margin-top: 60px;
+    }
+    .split-half {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+    .split-half img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .split-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.3);
+      transition: background-color 0.3s ease;
+    }
+    .split-button {
+      border: 1px solid white;
+      background: transparent;
+      color: white;
+      padding: 12px 30px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+    }
+    .split-button:hover {
+      background: white;
+      color: #333;
+    }
+    .split-overlay:hover {
+      background: rgba(0, 0, 0, 0.4);
+    }
+    #mapPopup .popup-content {
+      max-width: 800px;
+      padding: 20px;
+    }
+    #mapPopup h2 {
+      font-family: 'Playfair Display', serif;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSf-bWshENku0GCmLAmvO98-2nU7D3NTz4RmAVFIszfsAlAN8A/viewform?usp=header" target="_blank">
+      Schedule a consultation
+    </a>
+  </div>
+
+  <header>
+    <div class="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="logo">
+      <img src="images/logo.png" alt="Mayfair">
+    </div>
+    <nav class="nav-menu">
+      <a href="#">Home</a>
+      <a href="menu-options.html">Shop</a>
+      <a href="#">About</a>
+      <a href="#contact-section">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="slide active" style="background-image: url('images/Mayfair.gif')"></div>
+    <div class="slide" style="background-image: url('images/SavileRow.gif')"></div>
+    <div class="slide" style="background-image: url('images/LibertyWalk.gif')"></div>
+    <div class="slide" style="background-image: url('images/LibertyCross.gif')"></div>
+    <div class="slide" style="background-image: url('images/GuyLiberty.gif')"></div>
+    <div class="slide" style="background-image: url('images/GuyLiberty2.gif')"></div>
+    <div class="hero-content">
+      <h1>Timeless Essentials</h1>
+      <p>Classic fashion, modern fit. Tailored for your lifestyle.</p>
+      <button class="hero-button">COMING SOON</button>
+    </div>
+  </section>
+
+  <div class="popup-overlay" id="announcementPopup">
+    <div class="popup-content announcement">
+      <span class="close-popup">&times;</span>
+      <h2>Mayfair custom designs coming August 2025</h2>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="productPopup">
+    <div class="popup-content">
+      <span class="close-popup">&times;</span>
+      <img src="images/JacketLoop.gif" alt="Bespoke Jacket Craftsmanship" class="popup-image">
+      <div class="popup-text">
+        <h2>Bespoke Excellence</h2>
+        <p>Experience the pinnacle of tailoring artistry with our signature jackets. Each garment is meticulously crafted to your exact measurements, ensuring a fit that's uniquely yours. Our master tailors, with decades of Savile Row experience, hand-cut and stitch every piece using the finest Italian and British fabrics.</p>
+        <p>The result is more than just a jacket – it's a statement of sophistication that moves with you, enhancing your presence while providing unparalleled comfort. Every detail, from the hand-padded lapels to the surgeon's cuffs, speaks to our commitment to excellence.</p>
+        <button class="popup-button">Schedule Fitting</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="suitPopup">
+    <div class="popup-content">
+      <span class="close-popup">&times;</span>
+      <img src="images/3pcMove.gif" alt="Three Piece Suit Craftsmanship" class="popup-image">
+      <div class="popup-text">
+        <h2>The Complete Ensemble</h2>
+        <p>Our three-piece suits represent the epitome of sartorial excellence. Each suit is a masterpiece of tailoring, combining traditional craftsmanship with modern sophistication. The jacket, waistcoat, and trousers are individually cut and crafted to create a harmonious silhouette that's perfectly proportioned to your frame.</p>
+        <p>From the finest wool fabrics to the hand-finished details, every element is carefully considered and expertly executed. The result is a suit that not only fits impeccably but moves naturally with you, providing both comfort and confidence for any occasion.</p>
+        <button class="popup-button">Schedule Fitting</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="skirtPopup">
+    <div class="popup-content">
+      <span class="close-popup">&times;</span>
+      <img src="images/Skirt.png" alt="Designer Skirt" class="popup-image">
+      <div class="popup-text">
+        <h2>Designer Elegance</h2>
+        <p>Our designer skirts embody the perfect blend of sophistication and contemporary style. Each piece is thoughtfully designed and expertly tailored to create a silhouette that flatters your natural form. Using premium fabrics selected for both their beauty and durability, we ensure each skirt maintains its shape and elegance throughout the day.</p>
+        <p>From the precise dart placement to the carefully considered hemline, every detail is executed with meticulous attention. Whether you're seeking a statement piece for special occasions or a refined addition to your professional wardrobe, our skirts offer versatility without compromising on style.</p>
+        <a href="skirt-detail.html" class="popup-button" style="text-decoration: none; display: inline-block;">VIEW DETAILS</a>
+      </div>
+    </div>
+  </div>
+
+  <section class="section">
+    <h2>Featured Collection</h2>
+    <div class="products">
+      <div class="product">
+        <img src="images/SavilleEligance.png" alt="Bespoke Jacket">
+        <h3>Jackets</h3>
+      </div>
+      <div class="product">
+        <img src="images/Skirt.png" alt="Designer Skirt">
+        <h3>Designer Skirt</h3>
+      </div>
+      <div class="product">
+        <img src="images/3pcSuit.png" alt="Three Piece Suit">
+        <h3>3-Piece Suit</h3>
+      </div>
+    </div>
+  </section>
+
+  <section class="split-section">
+    <div class="split-half">
+      <img src="images/Fabric.gif" alt="Fabric Selection">
+      <div class="split-overlay">
+        <button class="split-button">Made to Measure</button>
+      </div>
+    </div>
+    <div class="split-half">
+      <img src="images/MayfairBentley2.png" alt="Trunk Shows">
+      <div class="split-overlay">
+        <button class="split-button">How it Works</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="popup-overlay" id="measurePopup">
+    <div class="popup-content announcement">
+      <span class="close-popup">&times;</span>
+      <h2>Made to Measure Service</h2>
+      <p>Experience our bespoke tailoring service. Coming August 2025.</p>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="trunkPopup">
+    <div class="popup-content announcement">
+      <span class="close-popup">&times;</span>
+      <h2>How it Works</h2>
+      <p>We source the finest fabrics from around the world, and partner with the best tailors in the world to create the perfect garment for you.</p>
+    </div>
+  </div>
+
+  <div class="popup-overlay" id="mapPopup">
+    <div class="popup-content">
+      <span class="close-popup">&times;</span>
+      <h2>Visit Us</h2>
+      <div style="width: 100%; padding: 20px;">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6923.990113749232!2d-95.40222792373578!3d29.80668717504423!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8640c77b510f04a3%3A0xbbba37ac9854e3eb!2s2233%20Yale%20St%2C%20Houston%2C%20TX%2077008!5e0!3m2!1sen!2sus!4v1749136614849!5m2!1sen!2sus" 
+          width="100%" 
+          height="450" 
+          style="border:0;" 
+          allowfullscreen="" 
+          loading="lazy" 
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+        <div style="margin-top: 20px; text-align: center;">
+          <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.2rem;">
+            2233 Yale St<br>
+            Houston, TX 77008
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer-container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>MAYFAIR</h3>
+        <p>Mayfair represents the pinnacle of bespoke fashion, delivering timeless elegance and exceptional craftsmanship to our discerning clientele.</p>
+      </div>
+      
+      <div class="footer-section" id="contact-section">
+        <h3>CONTACT US</h3>
+        <a href="javascript:void(0)" id="findUsLink">FIND US</a>
+        <a href="mailto:admin@thestudiomayfair.com">EMAIL US</a>
+        <a href="tel:+1112223333">CALL US: +01 (111) 222-3333</a>
+      </div>
+      
+      <div class="footer-section">
+        <h3>SUPPORT</h3>
+        <a href="#">PRIVACY POLICY</a>
+        <a href="#">DELIVERY & RETURNS</a>
+        <a href="#">TERMS & CONDITIONS</a>
+      </div>
+      
+      <div class="footer-section footer-logo">
+        <img src="images/favicon-196.png" alt="Mayfair Logo">
+      </div>
+    </div>
+    <div class="copyright">
+      © All Rights Reserved 2025 | MAYFAIR
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Slideshow functionality
+      const slides = document.querySelectorAll('.slide');
+      let currentSlide = 0;
+      
+      function nextSlide() {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active');
+      }
+      
+      setInterval(nextSlide, 5000);
+
+      // Hamburger menu functionality
+      const hamburger = document.querySelector('.hamburger');
+      const navMenu = document.querySelector('.nav-menu');
+      
+      hamburger.addEventListener('click', function() {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', function(event) {
+        if (!navMenu.contains(event.target) && !hamburger.contains(event.target)) {
+          hamburger.classList.remove('active');
+          navMenu.classList.remove('active');
+        }
+      });
+
+      // Product popup triggers
+      const jacketImage = document.querySelector('.product:nth-child(1) img');
+      const skirtImage = document.querySelector('.product:nth-child(2) img');
+      const suitImage = document.querySelector('.product:nth-child(3) img');
+
+      // All popups functionality
+      const heroButton = document.querySelector('.hero-button');
+      const announcementPopup = document.getElementById('announcementPopup');
+      const productPopup = document.getElementById('productPopup');
+      const skirtPopup = document.getElementById('skirtPopup');
+      const suitPopup = document.getElementById('suitPopup');
+      const measurePopup = document.getElementById('measurePopup');
+      const trunkPopup = document.getElementById('trunkPopup');
+      const mapPopup = document.getElementById('mapPopup');
+      const measureButton = document.querySelector('.split-half:first-child .split-button');
+      const trunkButton = document.querySelector('.split-half:last-child .split-button');
+      const findUsLink = document.getElementById('findUsLink');
+
+      // Open popups
+      heroButton.addEventListener('click', () => announcementPopup.style.display = 'flex');
+      jacketImage.addEventListener('click', () => productPopup.style.display = 'flex');
+      skirtImage.addEventListener('click', () => skirtPopup.style.display = 'flex');
+      suitImage.addEventListener('click', () => suitPopup.style.display = 'flex');
+      measureButton.addEventListener('click', () => measurePopup.style.display = 'flex');
+      trunkButton.addEventListener('click', () => trunkPopup.style.display = 'flex');
+      findUsLink.addEventListener('click', () => mapPopup.style.display = 'flex');
+
+      // Close functionality
+      const allPopups = [announcementPopup, productPopup, skirtPopup, suitPopup, measurePopup, trunkPopup, mapPopup];
+      
+      // Close when clicking X button
+      document.querySelectorAll('.close-popup').forEach(button => {
+        button.addEventListener('click', () => {
+          allPopups.forEach(popup => popup.style.display = 'none');
+        });
+      });
+
+      // Close when clicking outside
+      window.addEventListener('click', (event) => {
+        allPopups.forEach(popup => {
+          if (event.target === popup) {
+            popup.style.display = 'none';
+          }
+        });
+      });
+
+      // Schedule Fitting Button
+      const fittingButtons = document.querySelectorAll('.popup-button');
+      fittingButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSf-bWshENku0GCmLAmvO98-2nU7D3NTz4RmAVFIszfsAlAN8A/viewform?usp=header';
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

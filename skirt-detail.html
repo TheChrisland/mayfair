@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Designer Skirt - Mayfair</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Open+Sans:wght@300;400&family=Cormorant+Garamond:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
+      color: #222;
+      line-height: 1.6;
+    }
+    .top-bar {
+      background-color: #3B3535;
+      color: white;
+      text-align: center;
+      padding: 8px 20px;
+      font-size: 0.9rem;
+      font-family: 'Cormorant Garamond', serif;
+      letter-spacing: 0.5px;
+    }
+    .top-bar a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      width: 100%;
+      transition: opacity 0.3s ease;
+    }
+    .top-bar a:hover {
+      opacity: 0.8;
+    }
+    header {
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      background: white;
+    }
+    .logo {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .logo img {
+      height: 30px;
+      width: auto;
+    }
+    .product-container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+    .product-image {
+      width: 100%;
+      height: auto;
+    }
+    .product-details {
+      padding: 20px;
+    }
+    .product-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+    .product-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      margin-bottom: 30px;
+      color: #666;
+    }
+    .size-guide {
+      margin-bottom: 30px;
+    }
+    .size-guide h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      margin-bottom: 15px;
+    }
+    .size-options {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    .size-option {
+      padding: 8px 16px;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      font-family: 'Cormorant Garamond', serif;
+      transition: all 0.3s ease;
+    }
+    .size-option:hover {
+      background: #f5f5f5;
+    }
+    .size-option.selected {
+      border-color: #3B3535;
+      background: #3B3535;
+      color: white;
+    }
+    .add-to-cart {
+      background: #3B3535;
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 30px;
+      transition: background-color 0.3s ease;
+    }
+    .add-to-cart:hover {
+      background: #4a4242;
+    }
+    .product-description {
+      margin-bottom: 40px;
+    }
+    .product-description h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      margin-bottom: 15px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .product-description h3::after {
+      content: '+';
+      font-size: 1.2rem;
+    }
+    .product-description.open h3::after {
+      content: '-';
+    }
+    .description-content {
+      display: none;
+      padding: 20px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .product-description.open .description-content {
+      display: block;
+    }
+    .recommended-products {
+      padding: 60px 20px;
+      background: #f9f9f9;
+    }
+    .recommended-products h2 {
+      font-family: 'Playfair Display', serif;
+      text-align: center;
+      margin-bottom: 40px;
+      font-weight: 400;
+    }
+    .recommended-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+    .recommended-item {
+      text-align: center;
+    }
+    .recommended-item img {
+      width: 100%;
+      height: auto;
+      margin-bottom: 15px;
+    }
+    .recommended-item h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      margin-bottom: 10px;
+    }
+    .recommended-item p {
+      color: #666;
+    }
+    /* Add hamburger menu styles */
+    .hamburger {
+      cursor: pointer;
+      padding: 10px;
+      z-index: 100;
+    }
+    .hamburger span {
+      display: block;
+      width: 25px;
+      height: 2px;
+      background-color: #333;
+      margin: 5px 0;
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+      transition-delay: 0.1s;
+    }
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+      transition-delay: 0.1s;
+    }
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+      transition-delay: 0.1s;
+    }
+    .nav-menu {
+      position: absolute;
+      top: 100%;
+      left: 10px;
+      padding: 20px;
+      background: white;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 99;
+      opacity: 0;
+      pointer-events: none;
+      min-width: 200px;
+      transform-origin: top left;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .nav-menu.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .nav-menu a {
+      display: block;
+      margin: 15px 0;
+      text-decoration: none;
+      color: #333;
+      font-weight: 300;
+      font-size: 1.1rem;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      font-family: 'Cormorant Garamond', serif;
+      letter-spacing: 0.5px;
+    }
+    .nav-menu.active a {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .nav-menu a:hover {
+      opacity: 0.8;
+    }
+    .nav-menu a:nth-child(1) { transition-delay: 0.1s; }
+    .nav-menu a:nth-child(2) { transition-delay: 0.2s; }
+    .nav-menu a:nth-child(3) { transition-delay: 0.3s; }
+    .nav-menu a:nth-child(4) { transition-delay: 0.4s; }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSf-bWshENku0GCmLAmvO98-2nU7D3NTz4RmAVFIszfsAlAN8A/viewform?usp=header" target="_blank">
+      Schedule a consultation
+    </a>
+  </div>
+
+  <header>
+    <div class="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="logo">
+      <a href="index.html">
+        <img src="images/logo.png" alt="Mayfair">
+      </a>
+    </div>
+    <nav class="nav-menu">
+      <a href="index.html">Home</a>
+      <a href="menu-options.html">Shop</a>
+      <a href="#">About</a>
+      <a href="#contact-section">Contact</a>
+    </nav>
+  </header>
+
+  <div class="product-container">
+    <div class="product-image">
+      <img src="images/Skirt.png" alt="Designer Skirt" style="width: 100%;">
+    </div>
+    
+    <div class="product-details">
+      <h1 class="product-title">Designer Skirt</h1>
+      <p class="product-price">$2,250.00 USD</p>
+      
+      <div class="size-guide">
+        <h3>SIZE</h3>
+        <div class="size-options">
+          <div class="size-option">US 2</div>
+          <div class="size-option">US 4</div>
+          <div class="size-option selected">US 6</div>
+          <div class="size-option">US 8</div>
+          <div class="size-option">US 10</div>
+        </div>
+      </div>
+
+      <button class="add-to-cart">ADD TO CART</button>
+
+      <div class="product-description">
+        <h3>DESCRIPTION</h3>
+        <div class="description-content">
+          <p>Our designer skirts embody the perfect blend of sophistication and contemporary style. Each piece is thoughtfully designed and expertly tailored to create a silhouette that flatters your natural form. Using premium fabrics selected for both their beauty and durability, we ensure each skirt maintains its shape and elegance throughout the day.</p>
+          <p>From the precise dart placement to the carefully considered hemline, every detail is executed with meticulous attention. Whether you're seeking a statement piece for special occasions or a refined addition to your professional wardrobe, our skirts offer versatility without compromising on style.</p>
+        </div>
+      </div>
+
+      <div class="product-description">
+        <h3>COMPOSITION & CARE</h3>
+        <div class="description-content">
+          <p>- 100% Premium Italian Wool</p>
+          <p>- Fully lined in silk</p>
+          <p>- Dry clean only</p>
+          <p>- Made in England</p>
+        </div>
+      </div>
+
+      <div class="product-description">
+        <h3>DELIVERY & RETURNS</h3>
+        <div class="description-content">
+          <p>- Free worldwide shipping</p>
+          <p>- Delivery within 3-5 working days</p>
+          <p>- Free returns within 14 days</p>
+          <p>- Click & Collect available</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="recommended-products">
+    <h2>YOU MAY ALSO LIKE</h2>
+    <div class="recommended-grid">
+      <div class="recommended-item">
+        <img src="images/SavilleEligance.png" alt="Bespoke Jacket">
+        <h3>Jackets</h3>
+        <p>$2,500.00</p>
+      </div>
+      <div class="recommended-item">
+        <img src="images/3pcSuit.png" alt="Three Piece Suit">
+        <h3>3-Piece Suit</h3>
+        <p>$5,900.00</p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Hamburger menu functionality
+      const hamburger = document.querySelector('.hamburger');
+      const navMenu = document.querySelector('.nav-menu');
+      
+      hamburger.addEventListener('click', function() {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', function(event) {
+        if (!navMenu.contains(event.target) && !hamburger.contains(event.target)) {
+          hamburger.classList.remove('active');
+          navMenu.classList.remove('active');
+        }
+      });
+
+      // Existing size selection code
+      const sizeOptions = document.querySelectorAll('.size-option');
+      sizeOptions.forEach(option => {
+        option.addEventListener('click', function() {
+          sizeOptions.forEach(opt => opt.classList.remove('selected'));
+          this.classList.add('selected');
+        });
+      });
+
+      // Existing description toggles code
+      const descriptions = document.querySelectorAll('.product-description');
+      descriptions.forEach(desc => {
+        const title = desc.querySelector('h3');
+        title.addEventListener('click', function() {
+          desc.classList.toggle('open');
+        });
+      });
+
+      // Open first description by default
+      descriptions[0].classList.add('open');
+    });
+  </script>
+</body>
+</html> 

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Menu Options - Mayfair</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=Open+Sans:wght@300;400&family=Cormorant+Garamond:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
+      color: #222;
+      line-height: 1.6;
+      background-color: #f5f5f5;
+    }
+    .top-bar {
+      background-color: #3B3535;
+      color: white;
+      text-align: center;
+      padding: 8px 20px;
+      font-size: 0.9rem;
+      font-family: 'Cormorant Garamond', serif;
+      letter-spacing: 0.5px;
+    }
+    header {
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .logo img {
+      height: 30px;
+      width: auto;
+    }
+    .menu-options {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+      position: relative;
+      z-index: 1;
+    }
+    .menu-option {
+      background: white;
+      margin-bottom: 80px;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .nav-items {
+      position: absolute;
+      background: white;
+      left: 30px;
+      top: 80px;
+      opacity: 0;
+      visibility: hidden;
+      min-width: 200px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+    .nav-items a {
+      display: block;
+      padding: 12px 20px;
+      color: #333;
+      text-decoration: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+    }
+    .nav-items a:hover {
+      background: #f5f5f5;
+    }
+
+    /* Style 1 - Classic Slide with Fade */
+    .hamburger-1.active + .nav-items {
+      opacity: 1;
+      visibility: visible;
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hamburger-1 + .nav-items {
+      transform: translateY(-10px);
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hamburger-1.active + .nav-items {
+      transform: translateY(0);
+    }
+
+    /* Style 2 - Spin with Horizontal Reveal */
+    .hamburger-2 + .nav-items {
+      position: absolute;
+      transform-origin: left;
+      transform: scaleX(0);
+      width: 0;
+      transition: all 0.4s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      top: 15px;
+      left: 60px;
+      background: transparent;
+      box-shadow: none;
+      z-index: 101;
+    }
+    .hamburger-2.active + .nav-items {
+      opacity: 1;
+      visibility: visible;
+      transform: scaleX(1);
+      width: 200px;
+    }
+    .hamburger-2 + .nav-items a {
+      display: block;
+      transform: translateX(-20px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.9);
+      margin-bottom: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .hamburger-2.active + .nav-items a {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    .hamburger-2.active + .nav-items a:nth-child(1) { transition-delay: 0.1s; }
+    .hamburger-2.active + .nav-items a:nth-child(2) { transition-delay: 0.2s; }
+    .hamburger-2.active + .nav-items a:nth-child(3) { transition-delay: 0.3s; }
+    .hamburger-2.active + .nav-items a:nth-child(4) { transition-delay: 0.4s; }
+
+    /* Style 3 - Elastic with Bounce */
+    .hamburger-3 + .nav-items {
+      position: absolute;
+      transform: translateX(-50px);
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      background: transparent;
+      box-shadow: none;
+      top: 15px;
+      left: 60px;
+      display: flex;
+      gap: 20px;
+      width: auto;
+      z-index: 101;
+    }
+    .hamburger-3.active + .nav-items {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+    }
+    .hamburger-3 + .nav-items a {
+      transform: translateX(-20px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      color: #333;
+      text-decoration: none;
+      position: relative;
+    }
+    .hamburger-3 + .nav-items a::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 1px;
+      bottom: -2px;
+      left: 0;
+      background-color: #333;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    .hamburger-3 + .nav-items a:hover::after {
+      transform: scaleX(1);
+    }
+    .hamburger-3.active + .nav-items a {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    .hamburger-3.active + .nav-items a:nth-child(1) { transition-delay: 0.1s; }
+    .hamburger-3.active + .nav-items a:nth-child(2) { transition-delay: 0.2s; }
+    .hamburger-3.active + .nav-items a:nth-child(3) { transition-delay: 0.3s; }
+    .hamburger-3.active + .nav-items a:nth-child(4) { transition-delay: 0.4s; }
+
+    /* Style 4 - Minimal with Horizontal Slide */
+    .hamburger-4 + .nav-items {
+      position: absolute;
+      transform: translateX(-50px);
+      transition: all 0.4s ease;
+      background: transparent;
+      box-shadow: none;
+      top: 15px;
+      left: 60px;
+      display: flex;
+      gap: 10px;
+      width: auto;
+      z-index: 101;
+    }
+    .hamburger-4.active + .nav-items {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+    }
+    .hamburger-4 + .nav-items a {
+      transform: translateX(-20px);
+      opacity: 0;
+      transition: all 0.4s ease;
+      padding: 8px 15px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .hamburger-4.active + .nav-items a {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    .hamburger-4.active + .nav-items a:nth-child(1) { transition-delay: 0.1s; }
+    .hamburger-4.active + .nav-items a:nth-child(2) { transition-delay: 0.2s; }
+    .hamburger-4.active + .nav-items a:nth-child(3) { transition-delay: 0.3s; }
+    .hamburger-4.active + .nav-items a:nth-child(4) { transition-delay: 0.4s; }
+
+    /* Style 5 - Fancy with Rotate */
+    .hamburger-5 + .nav-items {
+      transform: perspective(400px) rotateX(-15deg);
+      transform-origin: top center;
+      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .hamburger-5.active + .nav-items {
+      opacity: 1;
+      visibility: visible;
+      transform: perspective(400px) rotateX(0);
+    }
+    .hamburger-5.active + .nav-items a {
+      opacity: 0;
+      animation: fadeRotate 0.5s ease forwards;
+    }
+    .hamburger-5.active + .nav-items a:nth-child(1) { animation-delay: 0.1s; }
+    .hamburger-5.active + .nav-items a:nth-child(2) { animation-delay: 0.2s; }
+    .hamburger-5.active + .nav-items a:nth-child(3) { animation-delay: 0.3s; }
+    .hamburger-5.active + .nav-items a:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes bounceIn {
+      0% {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      60% {
+        opacity: 1;
+        transform: translateX(10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideIn {
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeRotate {
+      from {
+        opacity: 0;
+        transform: rotateX(-10deg);
+      }
+      to {
+        opacity: 1;
+        transform: rotateX(0);
+      }
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      margin-bottom: 20px;
+      letter-spacing: 0.5px;
+    }
+    /* Style 1 - Classic Slide */
+    .hamburger-1 {
+      cursor: pointer;
+      padding: 10px;
+    }
+    .hamburger-1 span {
+      display: block;
+      width: 25px;
+      height: 2px;
+      background-color: #333;
+      margin: 5px 0;
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hamburger-1.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .hamburger-1.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger-1.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+
+    /* Style 2 - Spin */
+    .hamburger-2 {
+      cursor: pointer;
+      padding: 10px;
+    }
+    .hamburger-2 span {
+      display: block;
+      width: 25px;
+      height: 2px;
+      background-color: #333;
+      margin: 5px 0;
+      transition: all 0.4s ease;
+    }
+    .hamburger-2.active {
+      transform: rotate(180deg);
+    }
+    .hamburger-2.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .hamburger-2.active span:nth-child(2) {
+      width: 0;
+    }
+    .hamburger-2.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+
+    /* Style 3 - Elastic */
+    .hamburger-3 {
+      cursor: pointer;
+      padding: 10px;
+    }
+    .hamburger-3 span {
+      display: block;
+      width: 25px;
+      height: 2px;
+      background-color: #333;
+      margin: 5px 0;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .hamburger-3.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+      width: 28px;
+    }
+    .hamburger-3.active span:nth-child(2) {
+      transform: scaleX(0);
+    }
+    .hamburger-3.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+      width: 28px;
+    }
+
+    /* Style 4 - Minimal */
+    .hamburger-4 {
+      cursor: pointer;
+      padding: 10px;
+    }
+    .hamburger-4 span {
+      display: block;
+      width: 25px;
+      height: 1px;
+      background-color: #333;
+      margin: 6px 0;
+      transition: all 0.4s ease;
+    }
+    .hamburger-4.active span:nth-child(1) {
+      transform: translateY(7px);
+      opacity: 0;
+    }
+    .hamburger-4.active span:nth-child(2) {
+      transform: rotate(90deg);
+    }
+    .hamburger-4.active span:nth-child(3) {
+      transform: translateY(-7px);
+      opacity: 0;
+    }
+
+    /* Style 5 - Fancy */
+    .hamburger-5 {
+      cursor: pointer;
+      padding: 10px;
+    }
+    .hamburger-5 span {
+      display: block;
+      width: 25px;
+      height: 2px;
+      background-color: #333;
+      margin: 5px 0;
+      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .hamburger-5.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px) scale(0.8);
+    }
+    .hamburger-5.active span:nth-child(2) {
+      transform: rotate(180deg) scale(0.5);
+      opacity: 0.5;
+    }
+    .hamburger-5.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px) scale(0.8);
+    }
+
+    .description {
+      margin-top: 20px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    Schedule a consultation
+  </div>
+
+  <header>
+    <div class="logo">
+      <a href="index.html">
+        <img src="images/logo.png" alt="Mayfair">
+      </a>
+    </div>
+  </header>
+
+  <div class="menu-options">
+    <h2>Menu Style Options</h2>
+    <p style="text-align: center; margin-bottom: 40px;">
+      <a href="index.html" style="color: #333; text-decoration: none; font-family: 'Cormorant Garamond', serif; border-bottom: 1px solid #333;">Return to Main Page</a>
+    </p>
+    
+    <div class="menu-option">
+      <div class="hamburger-1">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="nav-items">
+        <a href="#">Home</a>
+        <a href="#">Shop</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="description">
+        Style 1 - Classic Slide: A smooth, professional transition with a clean fade-in dropdown.
+      </div>
+    </div>
+
+    <div class="menu-option">
+      <div class="hamburger-2">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="nav-items">
+        <a href="#">Home</a>
+        <a href="#">Shop</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="description">
+        Style 2 - Spin: Rotating hamburger with horizontal text reveal, expanding from left to right.
+      </div>
+    </div>
+
+    <div class="menu-option">
+      <div class="hamburger-3">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="nav-items">
+        <a href="#">Home</a>
+        <a href="#">Shop</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="description">
+        Style 3 - Elastic: Bouncy animation with sequentially appearing menu items.
+      </div>
+    </div>
+
+    <div class="menu-option">
+      <div class="hamburger-4">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="nav-items">
+        <a href="#">Home</a>
+        <a href="#">Shop</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="description">
+        Style 4 - Minimal: Horizontal slide with items appearing in a row, pill-style navigation.
+      </div>
+    </div>
+
+    <div class="menu-option">
+      <div class="hamburger-5">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="nav-items">
+        <a href="#">Home</a>
+        <a href="#">Shop</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="description">
+        Style 5 - Fancy: 3D rotation effect with fading menu items.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const hamburgers = document.querySelectorAll('[class^="hamburger-"]');
+      
+      hamburgers.forEach(hamburger => {
+        hamburger.addEventListener('click', function() {
+          this.classList.toggle('active');
+        });
+      });
+    });
+  </script>
+</body>
+</html> 
